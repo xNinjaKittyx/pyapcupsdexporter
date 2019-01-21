@@ -14,17 +14,17 @@ except:
   pass
 
 # Run APCACCESS
-#os.system('apcaccess > .apcupsd_output.txt')
+os.system('apcaccess > .apcupsd_output.txt')
 
 # Debug
 
 # Send to influxdb
 
-dbname = os.getenv('INFLUXDB_DATABASE', 'upsnew')
-user = ""
-password =""
+dbname = os.getenv('INFLUXDB_DATABASE', 'apcupsd')
+user = os.getenv('INFLUXDB_USER', '')
+password = os.getenv('INFLUXDB_PASSWORD', '')
 port = os.getenv('INFLUXDB_PORT', 8086)
-host = os.getenv('INFLUXDB_HOST', '10.0.1.11')
+host = os.getenv('INFLUXDB_HOST', 'localhost')
 client = InfluxDBClient(host, port, user, password, dbname)
 
 client.create_database(dbname)
@@ -33,12 +33,13 @@ client.create_database(dbname)
 print "Hostname: ", HOSTNAME
 print "database name: ", dbname
 print "db host:", host
-#print ups
 
 while True:
-  ups = apc.parse(apc.get(host="localhost"), strip_units=True)
+  ups = apc.parse(apc.get(host=os.getenv('APCUPSD_HOST', 'localhost')), strip_units=True)
+
   if os.environ['WATTS']:
     ups['NOMPOWER'] = os.environ['WATTS']
+  ups['NOMPOWER']=1500
   watts = float(float(ups['NOMPOWER']) * float(0.01 *float(ups['LOADPCT'])))
   json_body =  [
                       {
@@ -49,7 +50,11 @@ while True:
                               'BCHARGE' : float(ups['BCHARGE']),
                               'TONBATT' : float(ups['TONBATT']),
                               'TIMELEFT' : float(ups['TIMELEFT']),
-                              'NOMPOWER' : float(ups['NOMPOWER'])
+                              'NOMPOWER' : float(ups['NOMPOWER']),
+                              'CUMONBATT' : float(ups['CUMONBATT']),
+                              'BATTV' : float(ups['BATTV']),
+                              'OUTPUTV' : float(ups['OUTPUTV']),
+                              'ITEMP' : float(ups['ITEMP'])
                           },
                           'tags': {
                               'host': HOSTNAME

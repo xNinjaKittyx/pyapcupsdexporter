@@ -1,12 +1,9 @@
-FROM python:2.7.15-alpine3.7
-#FROM jfloff/alpine-python
-MAINTAINER Brandon <hey@brandongulla.com>
+FROM python:2-alpine
+MAINTAINER Allan <atribe13@gmail.com>
 
-RUN apk add --no-cache apcupsd jq curl supervisor busybox bash
-COPY ./conf/requirements.txt /requirements.txt
-COPY ./conf/apcupsd.conf /
-COPY ./src/app.py /
-RUN pip install -r /requirements.txt
-COPY ./conf/supervisord.conf /supervisord.conf
+VOLUME /src/
+COPY requirements.txt apcupsd-influxdb-exporter.py /src/
+WORKDIR /src
+RUN pip install -r requirements.txt
 
-CMD ["supervisord", "-n", "-c","/supervisord.conf"]
+CMD ["python", "-u", "/src/apcupsd-influxdb-exporter.py"]
