@@ -24,7 +24,7 @@ while True:
     watts = float(float(ups['NOMPOWER']) * float(0.01 * float(ups['LOADPCT'])))
     json_body = [
         {
-            'measurement': 'APC-NEW',
+            'measurement': 'apcaccess_status',
             'fields': {
                 'WATTS': float(watts),
                 'LOADPCT': float(ups['LOADPCT']),
@@ -42,6 +42,10 @@ while True:
             }
         }
     ]
-    print json_body
-    print client.write_points(json_body)
+
+    if os.getenv('VERBOSE', 'false').lower() == 'true':
+        print json_body
+        print client.write_points(json_body)
+    else:
+        client.write_points(json_body)
     time.sleep(5)
