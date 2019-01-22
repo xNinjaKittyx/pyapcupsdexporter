@@ -1,12 +1,9 @@
 version: '3'
 services:
   apcupsd-influxdb-exporter:
-    #image: apcupsd-influxdb-exporter
-    build: .
+    image: atribe/apcupsd-influxdb-exporter
     container_name: apcupsd-influxdb-exporter
     restart: always
-    volumes:
-      - ./config.ini:/src/config.ini
     environment:
       WATTS: 1500 # if your ups doesn't have NOMPOWER, set this to be the rated max power, if you do have NOMPOWER, don't set this variable
       HOSTNAME: unraid # host you want to show up in influxdb
