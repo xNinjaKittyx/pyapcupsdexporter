@@ -1,11 +1,8 @@
-FROM resin/raspberry-pi-alpine-python
-MAINTAINER Brandon <hey@brandongulla.com>
+FROM balenalib/raspberry-pi2-alpine-python
+MAINTAINER Allan <atribe13@gmail.com>
 
-RUN apk add --no-cache apcupsd jq curl supervisor
-COPY ./conf/requirements.txt /requirements.txt
-COPY ./conf/apcupsd.conf /
-COPY ./src/app.py /
-RUN pip install -r /requirements.txt
-COPY ./conf/supervisord.conf /supervisord.conf
+WORKDIR /src
+COPY requirements.txt apcupsd-influxdb-exporter.py /src/
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["supervisord", "-n", "-c","/supervisord.conf"]
+CMD ["python", "-u", "/src/apcupsd-influxdb-exporter.py"]
