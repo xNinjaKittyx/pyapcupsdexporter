@@ -44,8 +44,8 @@ while True:
     ]
 
     if os.getenv('VERBOSE', 'false').lower() == 'true':
-        print json_body
-        print client.write_points(json_body)
+        print(json_body)
+        print(client.write_points(json_body))
     else:
         client.write_points(json_body)
     time.sleep(5)

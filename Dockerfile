@@ -1,4 +1,4 @@
-FROM python:2-alpine
+FROM python:alpine
 MAINTAINER Allan <atribe13@gmail.com>
 
 WORKDIR /src
