@@ -22,7 +22,8 @@ These are all the available environment variables, along with some example value
 | INFLUXDB_USER | myuser | optional, defaults to empty |
 | INFLUXDB_PASSWORD | pass | optional, defaults to empty |
 | INFLUXDB_PORT |  8086 | optional, defaults to 8086 |
-| VERBOSE | true | if anything but true docker logging will show no output
+| INTERVAL | 5 | optional, defaults to 5 seconds |
+| VERBOSE | true | if anything but true docker logging will show no output |
 
 ## How to Use
 
@@ -51,6 +52,7 @@ services:
       APCUPSD_HOST: 10.0.1.11
       INFLUXDB_HOST: 10.0.1.11
       HOSTNAME: unraid
+      INTERVAL: 5
 ```
 
 If you want to debug the apcaccess output or the send to influxdb, set the environment variable "VERBOSE" to "true"
