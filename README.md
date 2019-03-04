@@ -13,9 +13,9 @@ These are all the available environment variables, along with some example value
 | Environment Varialbe | Example Value | Description |
 | -------------------- | ------------- | ----------- |
 | WATTS |  1000 | if your ups doesn't have NOMPOWER, set this to be the rated max power, if you do have NOMPOWER, don't set this variable |
-| APCUPSD_HOST | 192.168.1.100 | host running apcupsd |
+| APCUPSD_HOST | 192.168.1.100 | host running apcupsd, defaults to the value of influxdb_host |
 | INFLUXDB_HOST | 192.168.1.101 | host running influxdb |
-| HOSTNAME | unraid | host you want to show up in influxdb, optional defaults to apcupsd hostname value|
+| HOSTNAME | unraid | host you want to show up in influxdb. Optional, defaults to apcupsd hostname value|
 | INFLUXDB_DATABASE | apcupsd | db name for influxdb. optional, defaults to apcupsd |
 | INFLUXDB_USER | myuser | optional, defaults to empty |
 | INFLUXDB_PASSWORD | pass | optional, defaults to empty |
