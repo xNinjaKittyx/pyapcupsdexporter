@@ -27,7 +27,7 @@ port = os.getenv('INFLUXDB_PORT', 8086)
 host = os.getenv('INFLUXDB_HOST')
 apcupsd_host = os.getenv('APCUPSD_HOST', host)
 
-delay = os.getenv('DELAY', 10)
+delay = os.getenv('INTERVAL', 10)
 
 print_to_console = os.getenv('VERBOSE', 'false').lower() == 'true'
 
