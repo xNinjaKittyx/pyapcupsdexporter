@@ -32,7 +32,7 @@ delay = os.getenv('INTERVAL', 10)
 print_to_console = os.getenv('VERBOSE', 'false').lower() == 'true'
 
 remove_these_keys = ['DATE', 'STARTTIME', 'END APC']
-tag_keys = ['APC', 'HOSTNAME', 'UPSNAME', 'VERSION', 'CABLE', 'MODEL', 'UPSMODE', 'DRIVER', 'APCMODEL', 'END APC']
+tag_keys = ['APC', 'HOSTNAME', 'UPSNAME', 'VERSION', 'CABLE', 'MODEL', 'UPSMODE', 'DRIVER', 'APCMODEL']
 
 watts_key = 'WATTS'
 nominal_power_key = 'NOMPOWER'
