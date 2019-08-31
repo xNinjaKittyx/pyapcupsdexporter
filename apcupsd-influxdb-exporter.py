@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import os
+import requests.exceptions
 import time
 
 from apcaccess import status as apc
