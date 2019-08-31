@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import os
+import requests.exceptions
 import time
 
 from apcaccess import status as apc
@@ -37,10 +38,13 @@ tag_keys = ['APC', 'HOSTNAME', 'UPSNAME', 'VERSION', 'CABLE', 'MODEL', 'UPSMODE'
 watts_key = 'WATTS'
 nominal_power_key = 'NOMPOWER'
 
-client = InfluxDBClient(host, port, user, password, dbname)
-client.create_database(dbname)
+client = None
 
 while True:
+    if not client:
+        client = InfluxDBClient(host, port, user, password, dbname)
+        client.create_database(dbname)
+
     try:
         ups = apc.parse(apc.get(host=apcupsd_host), strip_units=True)
 
@@ -70,8 +74,15 @@ while True:
         else:
             client.write_points(json_body)
 
-        time.sleep(delay)
     except ValueError as valueError:
         raise valueError
+    except (requests.exceptions.ConnectionError,
+            requests.exceptions.HTTPError,
+            requests.exceptions.Timeout):
+        print(e)
+        print('Resetting client connection')
+        client = None
     except Exception as e:
         print(e)
+
+    time.sleep(delay)
