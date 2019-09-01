@@ -28,7 +28,9 @@ port = os.getenv('INFLUXDB_PORT', 8086)
 host = os.getenv('INFLUXDB_HOST')
 apcupsd_host = os.getenv('APCUPSD_HOST', host)
 
-delay = os.getenv('INTERVAL', 10)
+min_delay = int(os.getenv('INTERVAL', 10))
+max_delay = int(os.getenv('MAX_INTERVAL', min_delay * 8))
+delay = min_delay
 
 print_to_console = os.getenv('VERBOSE', 'false').lower() == 'true'
 
@@ -42,8 +44,18 @@ client = None
 
 while True:
     if not client:
-        client = InfluxDBClient(host, port, user, password, dbname)
-        client.create_database(dbname)
+        try:
+            client = InfluxDBClient(host, port, user, password, dbname)
+            client.create_database(dbname)
+            if delay != min_delay:
+                delay = min_delay
+                print('Connection successful, changing delay to %d' % delay)
+        except:
+            client = None
+            new_delay = min(delay * 2, max_delay)
+            if delay != new_delay:
+                delay = new_delay
+                print('Error creating client, changing delay to %d' % delay)
 
     try:
         ups = apc.parse(apc.get(host=apcupsd_host), strip_units=True)
@@ -78,7 +90,7 @@ while True:
         raise valueError
     except (requests.exceptions.ConnectionError,
             requests.exceptions.HTTPError,
-            requests.exceptions.Timeout):
+            requests.exceptions.Timeout) as e:
         print(e)
         print('Resetting client connection')
         client = None
