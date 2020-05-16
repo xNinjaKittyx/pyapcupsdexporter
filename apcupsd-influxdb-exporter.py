@@ -5,6 +5,7 @@ import time
 
 from apcaccess import status as apc
 from influxdb import InfluxDBClient
+from influxdb.exceptions import InfluxDBClientError
 
 def remove_irrelevant_data(status, remove_these_keys):
     for key in remove_these_keys:
@@ -46,11 +47,18 @@ while True:
     if not client:
         try:
             client = InfluxDBClient(host, port, user, password, dbname)
-            client.create_database(dbname)
+            client.ping()
+            print('Connectivity to InfluxDB present')
+            dblist = client.client.get_list_database()
+            if dbname not in [ x['name'] for x in dblist]:
+                print("Database doesn't exist, creating")
+                client.create_database(dbname)
             if delay != min_delay:
                 delay = min_delay
                 print('Connection successful, changing delay to %d' % delay)
-        except:
+        except Exception as e:
+            if isinstance(e, InfluxDBClientError) and e.code == 401:
+                print('Credentials provided are not authorized, error is: {}'.format(e.content))
             client = None
             new_delay = min(delay * 2, max_delay)
             if delay != new_delay:
