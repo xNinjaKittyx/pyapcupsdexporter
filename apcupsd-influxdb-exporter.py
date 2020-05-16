@@ -49,7 +49,7 @@ while True:
             client = InfluxDBClient(host, port, user, password, dbname)
             client.ping()
             print('Connectivity to InfluxDB present')
-            dblist = client.client.get_list_database()
+            dblist = client.get_list_database()
             if dbname not in [ x['name'] for x in dblist]:
                 print("Database doesn't exist, creating")
                 client.create_database(dbname)
