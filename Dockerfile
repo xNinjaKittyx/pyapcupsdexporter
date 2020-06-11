@@ -1,4 +1,5 @@
 FROM python:alpine
+RUN apk add tzdata
 MAINTAINER Allan <atribe13@gmail.com>
 
 WORKDIR /src
