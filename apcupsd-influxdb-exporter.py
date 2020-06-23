@@ -35,7 +35,7 @@ delay = min_delay
 
 print_to_console = os.getenv('VERBOSE', 'false').lower() == 'true'
 
-remove_these_keys = ['DATE', 'STARTTIME', 'END APC']
+remove_these_keys = ['DATE', 'STARTTIME', 'END APC','ALARMDEL']
 tag_keys = ['APC', 'HOSTNAME', 'UPSNAME', 'VERSION', 'CABLE', 'MODEL', 'UPSMODE', 'DRIVER', 'APCMODEL']
 
 watts_key = 'WATTS'
