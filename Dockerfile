@@ -1,9 +1,11 @@
 FROM python:alpine
 RUN apk add tzdata
-MAINTAINER Allan <atribe13@gmail.com>
+MAINTAINER Daniel A <xNinjaKittyx@users.noreply.github.com>
 
 WORKDIR /src
-COPY requirements.txt apcupsd-influxdb-exporter.py /src/
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml poetry.lock ./
+RUN pip install --no-cache-dir poetry
+RUN poetry install
+COPY pyapcupsexporter/ pyapcupsexporter/
 
-CMD ["python", "-u", "/src/apcupsd-influxdb-exporter.py"]
+CMD ["poetry", "run", "python", "/src/pyapcupsexporter/main.py"]

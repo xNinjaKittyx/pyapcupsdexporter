@@ -7,20 +7,22 @@ This is a fork of https://github.com/atribe/apcupsd-influxdb-exporter to add Inf
 ## How to build
 Building the image is straight forward:
 * Git clone this repo
-* `docker build -t apcupsd-influxdb-exporter  .`
+* `docker build -t pyapcupsdexporter  .`
 
 ## Environment Variables
 These are all the available environment variables, along with some example values, and a description.
 
-| Environment Varialbe | Example Value | Description |
+With the changes to InfluxDB 2.0, this currently requires you to have an ORG + Token setup instead of the base username/password.
+
+
+| Environment Variable | Example Value | Description |
 | -------------------- | ------------- | ----------- |
 | WATTS |  1000 | if your ups doesn't have NOMPOWER, set this to be the rated max power, if you do have NOMPOWER, don't set this variable |
 | APCUPSD_HOST | 192.168.1.100 | host running apcupsd, defaults to the value of influxdb_host |
-| INFLUXDB_HOST | 192.168.1.101 | host running influxdb |
-| HOSTNAME | unraid | host you want to show up in influxdb. Optional, defaults to apcupsd hostname value|
-| INFLUXDB_DATABASE | apcupsd | db name for influxdb. optional, defaults to apcupsd |
-| INFLUXDB_USER | myuser | optional, defaults to empty |
-| INFLUXDB_PASSWORD | pass | optional, defaults to empty |
+| INFLUX_URL | http://192.168.1.100:8086 | required. URL to your InfluxDB Instance. |
+| INFLUX_ORG | my-org | required, the name of the organization. |
+| INFLUX_TOKEN | somebase64string | required, needed to log in to InfluxDB instance |
+| INFLUXDB_PORT |  8086 | optional, defaults to 8086 |
 | INFLUXDB_PORT |  8086 | optional, defaults to 8086 |
 | INTERVAL | 10 | optional, defaults to 10 seconds |
 | VERBOSE | true | if anything but true docker logging will show no output |
@@ -31,11 +33,11 @@ These are all the available environment variables, along with some example value
 ```bash
 docker run --rm  -d --name="apcupsd-influxdb-exporter" \
     -e "WATTS=600" \
-    -e "INFLUXDB_HOST=10.0.1.11" \
+    -e "INFLUX_url=http://10.0.1.11:8086" \
     -e "APCUPSD_HOST=10.0.1.11" \
-    -t atribe/apcupsd-influxdb-exporter
+    -t xNinjaKittyx/pyapcupsdexporter
 ```
-Note: if your UPS does not include the NOMPOWER metric, you will need to include the WATTS environment variable in order to compute the live-power consumption 
+Note: if your UPS does not include the NOMPOWER metric, you will need to include the WATTS environment variable in order to compute the live-power consumption
 metric.
 
 ### Run from docker-compose
