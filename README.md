@@ -31,9 +31,11 @@ With the changes to InfluxDB 2.0, this currently requires you to have an ORG + T
 
 ### Run docker container directly
 ```bash
-docker run --rm  -d --name="apcupsd-influxdb-exporter" \
+docker run --rm  -d --name="pyapcupsdexporter" \
     -e "WATTS=600" \
-    -e "INFLUX_url=http://10.0.1.11:8086" \
+    -e "INFLUX_URL=http://10.0.1.11:8086" \
+    -e "INFLUX_TOKEN=asdflkajwse;orfiajsdklfjaskl==" \
+    -e "INFLUX_ORG=my-org" \
     -e "APCUPSD_HOST=10.0.1.11" \
     -t xNinjaKittyx/pyapcupsdexporter
 ```
@@ -44,14 +46,16 @@ metric.
 ```bash
 version: '3'
 services:
-  apcupsd-influxdb-exporter:
-    image: atribe/apcupsd-influxdb-exporter
-    container_name: apcupsd-influxdb-exporter
+  pyapcupsdexporter:
+    image: xNinjaKittyx/pyapcupsdexporter
+    container_name: pyapcupsdexporter
     restart: always
     environment:
       WATTS: 1000
       APCUPSD_HOST: 10.0.1.11
-      INFLUXDB_HOST: 10.0.1.11
+      INFLUX_URL: http://10.0.1.11:8086
+      INFLUX_ORG: my-org
+      INFLUX_TOKEN:
       INTERVAL: 5
 ```
 
