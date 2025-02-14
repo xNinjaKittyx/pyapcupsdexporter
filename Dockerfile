@@ -1,11 +1,11 @@
-FROM python:alpine
+FROM python:3.12-alpine
 RUN apk add tzdata
-MAINTAINER Daniel A <xNinjaKittyx@users.noreply.github.com>
+LABEL org.opencontainers.image.authors="xNinjaKittyx@users.noreply.github.com"
 
 WORKDIR /src
-COPY pyproject.toml poetry.lock ./
 RUN pip install --no-cache-dir poetry
-RUN poetry install
+COPY pyproject.toml poetry.lock README.md ./
 COPY pyapcupsexporter/ pyapcupsexporter/
+RUN poetry install --no-root
 
 CMD ["poetry", "run", "python", "/src/pyapcupsexporter/main.py"]

@@ -47,16 +47,18 @@ metric.
 version: '3'
 services:
   pyapcupsdexporter:
-    image: xNinjaKittyx/pyapcupsdexporter
-    container_name: pyapcupsdexporter
+    image: ghcr.io/xninjakittyx/pyapcupsdexporter:master
+    container_name: apcupsd-influxdb-exporter
     restart: always
     environment:
-      WATTS: 1000
-      APCUPSD_HOST: 10.0.1.11
-      INFLUX_URL: http://10.0.1.11:8086
-      INFLUX_ORG: my-org
-      INFLUX_TOKEN:
+      WATTS: 1500 # if your ups doesn't have NOMPOWER, set this to be the rated max power, if you do have NOMPOWER, don't set this variable
+      APCUPSD_HOST: 10.0.1.11  # Host running APCUPSD
+      INFLUX_URL: http://10.0.1.11:8086  # URL of the InfluxDB instance
+      INFLUX_ORG: my-org  # ORG Associated with your influx bucket.
+      INFLUX_TOKEN:  # Token associated with your influx instance/org
+      INFLUX_BUCKET: apcupsd
       INTERVAL: 5
+      VERBOSE: true
 ```
 
 If you want to debug the apcaccess output or the send to influxdb, set the environment variable "VERBOSE" to "true"

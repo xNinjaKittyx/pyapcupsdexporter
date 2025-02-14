@@ -8,9 +8,32 @@ from apcaccess import status as apc
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-logger = logging.getLogger()
+
+INFLUX_TOKEN = os.getenv('INFLUX_TOKEN')
+INFLUX_URL = os.getenv('INFLUX_URL', "http://localhost:8086")
+INFLUX_BUCKET = os.getenv('INFLUX_BUCKET', 'apcupsd')
+INFLUX_ORG = os.getenv('INFLUX_ORG')
+
+APCUPSD_HOST = os.getenv('APCUPSD_HOST')
+
+INTERVAL = int(os.getenv('INTERVAL', 10))
+
+if os.getenv('VERBOSE', 'false').lower() == 'true':
+    LOG_LEVEL = logging.DEBUG
+else:
+    LOG_LEVEL = logging.INFO
+
+remove_these_keys = ['DATE', 'STARTTIME', 'END APC','ALARMDEL']
+tag_keys = ['APC', 'HOSTNAME', 'UPSNAME', 'VERSION', 'CABLE', 'MODEL', 'UPSMODE', 'DRIVER', 'APCMODEL']
+
+watts_key = 'WATTS'
+nominal_power_key = 'NOMPOWER'
+
+logger = logging.getLogger(__name__)
+logger.setLevel(LOG_LEVEL)
 formatter = logging.Formatter("%(asctime)s::%(levelname)s:%(module)s:%(lineno)d - %(message)s")
 sh = logging.StreamHandler()
+sh.setLevel(LOG_LEVEL)
 sh.setFormatter(formatter)
 logger.addHandler(sh)
 
@@ -30,28 +53,15 @@ def convert_numerical_values_to_floats(ups):
             ups[key] = float(ups[key])
 
 
-INFLUX_TOKEN = os.getenv('INFLUX_TOKEN')
-INFLUX_URL = os.getenv('INFLUX_URL', "http://localhost:8086")
-INFLUX_BUCKET = os.getenv('INFLUX_BUCKET', 'apcupsd')
-INFLUX_ORG = os.getenv('INFLUX_ORG')
-
-APCUPSD_HOST = os.getenv('APCUPSD_HOST')
-
-INTERVAL = int(os.getenv('INTERVAL', 10))
-
-print_to_console = os.getenv('VERBOSE', 'false').lower() == 'true'
-
-remove_these_keys = ['DATE', 'STARTTIME', 'END APC','ALARMDEL']
-tag_keys = ['APC', 'HOSTNAME', 'UPSNAME', 'VERSION', 'CABLE', 'MODEL', 'UPSMODE', 'DRIVER', 'APCMODEL']
-
-watts_key = 'WATTS'
-nominal_power_key = 'NOMPOWER'
-
-
 
 def main():
+    logger.info("Connecting to InfluxDB...")
     with InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG) as client:
+        
+        logger.info("Connected to InfluxDB...")
         while True:
+            
+            logger.info("Ensure InfluxDB Bucket Exists...")
             try:
                 buckets_api = client.buckets_api()
                 bucket = buckets_api.find_bucket_by_name(INFLUX_BUCKET)
@@ -63,6 +73,7 @@ def main():
                 time.sleep(INTERVAL)
                 continue
 
+            logger.info("Grabbing UPS Data...")
             # Grab the UPS Data.
             try:
                 ups = apc.parse(apc.get(host=APCUPSD_HOST), strip_units=True)
@@ -88,6 +99,7 @@ def main():
                 time.sleep(INTERVAL)
                 continue
 
+            logger.info("Add Data Point to InfluxDB...")
             try:
                 json_body = {
                     'measurement': 'apcaccess_status',
@@ -95,15 +107,14 @@ def main():
                     'tags': tags
                 }
 
-                if print_to_console:
-                    print(json_body)
+                logger.debug(f"Data Point: {json_body}")
 
                 write_api = client.write_api(write_options=SYNCHRONOUS)
                 write_api.write(INFLUX_BUCKET, record=json_body)
             except Exception as e:
                 logger.exception(f"Failed to upload data to InfluxDB: {e}")
 
-
+            logger.info(f"Completed. Sleeping for {INTERVAL}")
             time.sleep(INTERVAL)
             continue
 
