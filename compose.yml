@@ -1,6 +1,6 @@
 services:
   pyapcupsdexporter:
-    image: atribe/apcupsd-influxdb-exporter
+    build: .
     container_name: apcupsd-influxdb-exporter
     restart: always
     environment:

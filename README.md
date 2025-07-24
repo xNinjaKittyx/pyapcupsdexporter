@@ -24,7 +24,7 @@ metric.
 version: '3'
 services:
   pyapcupsdexporter:
-    image: ghcr.io/xninjakittyx/pyapcupsdexporter:master
+    image: ghcr.io/xninjakittyx/pyapcupsdexporter
     container_name: apcupsd-influxdb-exporter
     restart: always
     environment:

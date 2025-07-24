@@ -110,3 +110,10 @@ venv.bak/
 
 # personal
 build*
+
+compose-dev.yml
+Dockerfile
+compose.yml
+img/
+.github/
+.pre-commit-config.yaml
