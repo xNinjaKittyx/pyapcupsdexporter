@@ -4,6 +4,16 @@ Dockerized Python script that will send data from [apcupsd](http://www.apcupsd.o
 
 This is a fork of https://github.com/atribe/apcupsd-influxdb-exporter to add InfluxDB 2.x support.
 
+
+## NOTE
+
+- This still works as-is, but due to influxDB's terrible way of managing v1->v2->v3, I've decided to stop maintaining this altogether.
+- Trying to move away from InfluxDB, using greptimeDB as replacement, and prometheus exports / gRPC whenever possible.
+- You can check out my Rust Prometheus Export here - https://github.com/xNinjaKittyx/rsapcupsdexporter
+   - Ram consumption 30 MB -> 8 MB
+   - Docker image size is very small. ~2 MB
+
+
 ## How to Use
 
 ### Run docker container directly
